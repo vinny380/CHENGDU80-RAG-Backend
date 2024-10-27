@@ -18,15 +18,15 @@ from azure.search.documents.indexes.models import (
     SearchIndex,
     AzureOpenAIVectorizer
 )
-from backend.imports import SEARCH_SERVICE_NAME, SEARCH_INDEX_NAME, SEARCH_KEY, SEARCH_ENDPOINT
+from backend.imports import SEARCH_SERVICE_NAME, SEARCH_INDEX_NAME, SEARCH_ADMIN_KEY, SEARCH_ENDPOINT
 
 
 
 # Initialize the SearchIndexClient
 index_client = SearchIndexClient(endpoint=SEARCH_ENDPOINT,
-                                  credential=AzureKeyCredential(SEARCH_KEY))
+                                  credential=AzureKeyCredential(SEARCH_ADMIN_KEY))
 # Initialize Search Client
-search_client = SearchClient(endpoint=SEARCH_ENDPOINT, index_name=SEARCH_INDEX_NAME, credential=AzureKeyCredential(SEARCH_KEY))
+search_client = SearchClient(endpoint=SEARCH_ENDPOINT, index_name=SEARCH_INDEX_NAME, credential=AzureKeyCredential(SEARCH_ADMIN_KEY))
 
 def create_index():
     try:
