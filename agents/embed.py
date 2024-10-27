@@ -1,4 +1,4 @@
-from imports import AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT, EMBEDDING_DEPLOYMENT_NAME
+from agents.imports import AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT, EMBEDDING_DEPLOYMENT_NAME
 from langchain_openai import AzureOpenAIEmbeddings
 
 

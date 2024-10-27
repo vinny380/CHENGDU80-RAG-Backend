@@ -1,4 +1,4 @@
-from imports import AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT
+from agents.imports import AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT
 from langchain_openai import AzureChatOpenAI
 
 
