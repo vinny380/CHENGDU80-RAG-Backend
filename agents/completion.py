@@ -45,3 +45,5 @@ def complete(prompt: str) -> dict:
     ]
     ai_msg = LLM_CHAT.invoke(messages)
     return ai_msg
+
+#complete()

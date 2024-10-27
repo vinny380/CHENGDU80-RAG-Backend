@@ -1,10 +1,18 @@
 # app.py
 from flask import Flask, jsonify, request
+import json
 
-
-from agents import embed
+from agents import embed,completion
 from backend.src import RAG
 app = Flask(__name__)
+
+@app.route("/complete", methods=["POST"])
+def complete():
+    prompt = request.get_json()["prompt"]
+    response = completion.complete(prompt)
+    response_json = json.loads(response.content)
+    return jsonify(response_json), 200
+    
 
 @app.route("/index", methods=["POST"])
 def index():
