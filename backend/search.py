@@ -21,18 +21,12 @@ from azure.search.documents.indexes.models import (
 from backend.imports import SEARCH_SERVICE_NAME, SEARCH_INDEX_NAME, SEARCH_ADMIN_KEY, SEARCH_ENDPOINT
 
 
-# Azure Cognitive Search configuration
-search_service_name = SEARCH_SERVICE_NAME
-index_name = SEARCH_INDEX_NAME
-admin_key = SEARCH_ADMIN_KEY
 
-# Initialize Search Index Client
-endpoint = SEARCH_ENDPOINT
 # Initialize the SearchIndexClient
-index_client = SearchIndexClient(endpoint=endpoint,
-                                  credential=AzureKeyCredential(admin_key))
+index_client = SearchIndexClient(endpoint=SEARCH_ENDPOINT,
+                                  credential=AzureKeyCredential(SEARCH_ADMIN_KEY))
 # Initialize Search Client
-search_client = SearchClient(endpoint=endpoint, index_name=index_name, credential=AzureKeyCredential(admin_key))
+search_client = SearchClient(endpoint=SEARCH_ENDPOINT, index_name=SEARCH_INDEX_NAME, credential=AzureKeyCredential(SEARCH_ADMIN_KEY))
 
 def create_index():
     try:
@@ -54,7 +48,7 @@ def create_index():
 
         # Define the index schema
         index = SearchIndex(
-            name=index_name,
+            name=SEARCH_INDEX_NAME,
             fields=[
                 SimpleField(name="id", type=SearchFieldDataType.String, key=True, sortable=True, filterable=True, facetable=True),
                 SearchableField(name="title", type=SearchFieldDataType.String),
