@@ -17,28 +17,50 @@ def complete(prompt: str) -> dict:
     """Does what the user says!"""
     messages = [
         (
-            "system",
-            """You are a insurance specialist for autonomous vehicles (AV). Your goal is to 
-            write insurance policies given a user's profile and AV vehicle. You ought to consider
-            the fact that the user is not always driving the AV, hence the AV might get into
-            an accident by itself. Your goal is to provide the user with the best possible insurance
-            policy/contract for the insurance company to maximize revenue and minimize risks, but you
-            need to balance that with the customer's need such that they don't use another provider.
+        "system",
+        """As an insurance specialist for autonomous vehicles (AV), your task is to draft tailored insurance policies based on a user's profile and their specific AV model. Consider that the AV can operate independently without the user's direct control, which may lead to autonomous accidents. Your objective is to create the most advantageous insurance policy that maximizes revenue and minimizes risks for the insurance company, while also ensuring it is competitive and appealing enough to retain the customer over other providers.
 
-            The output of your response should always be formatted following the JSON format, with title, 
-            section title, content. For example:
+            Please format your response in JSON, including distinct sections with titles and detailed content. Each section should address different aspects of the policy. Here is the structure to follow:
 
-            "{"title": "Insurance Policy",
-                { 
-                "section_title": "Clauses",
-                "section_content": "1. "Not crash lol",
+            {
+            "title": "Customized AV Insurance Policy",
+            "sections": [
+                {
+                "section_title": "Coverage and Clauses",
+                "section_content": "Details the specific coverage items and clauses relevant to autonomous operation and user control scenarios."
+                },
+                {
+                "section_title": "Liability and Responsibilities",
+                "section_content": "Outlines the division of financial responsibility between the insurance holder and the company in cases of autonomous accidents."
+                },
+                {
+                "section_title": "Pricing and Payment",
+                "section_content": "Provides a breakdown of premium calculations, discounts, and payment schedules."
                 }
-                {    
-                "section_title": "Responsibility",
-                "section_content": "1. "If you crash, you pay",
-                }
+            ],
+            "metadata" : {
+                "price" : 100, -- how much the user will pay per month
+                "AI_safety_score" : 90 -- how safe the autodrive of their car is.
+                "driver_behaviour" : -- description of the driver behaviour given the user's data.,
+                "deductible" : -- how much the customer will pay out of pocket
+                
 
             }
+            }
+        """,
+        ),
+        ("human", prompt),
+    ]
+    ai_msg = LLM_CHAT.invoke(messages)
+    return ai_msg
+
+
+def prompt_optimization(prompt: str) -> dict:
+    messages = [
+        (
+            "system",
+            """You're a specialist in prompt engineering for LLMs. Optimize the user prompt
+            for optimal results with LLMs.
             """,
         ),
         ("human", prompt),
@@ -46,4 +68,5 @@ def complete(prompt: str) -> dict:
     ai_msg = LLM_CHAT.invoke(messages)
     return ai_msg
 
-#complete()
+if __name__ == '__main__':
+    result = prompt_optimization("")
