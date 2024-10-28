@@ -1,0 +1,67 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Constants
+L_base = 100000  # Base liability (max liability)
+k = 2            # Exponential growth factor
+P_base = 200     # Base monthly premium
+m = 10           # Premium increase factor
+
+# Function to calculate liability
+def calculate_liability(ratio, base_liability, growth_factor, multiplier):
+    return base_liability * np.exp(growth_factor * ratio * multiplier)
+
+# Function to calculate premium
+def calculate_premium(ratio, base_premium, increase_factor):
+    return base_premium + increase_factor * (ratio) * 100  # Increase with the ratio
+
+# Calculate ratio of aggressive to non-aggressive behavior
+ratios = np.linspace(0, 1, 5)  # Reduced resolution to 5 points
+
+# Calculate liabilities using the functions
+liabilities_total_coverage = calculate_liability(ratios, L_base, k, 0.8)  # Total Coverage
+liabilities_economic = calculate_liability(ratios, L_base, k, 0.6)         # Economic
+liabilities_balanced = calculate_liability(ratios, L_base, k, 0.7)         # Balanced
+
+# Calculate premiums using the function
+premiums_total_coverage = calculate_premium(ratios, P_base, m)  # Total Coverage
+premiums_economic = calculate_premium(ratios, P_base, m * 0.8)  # Economic
+premiums_balanced = calculate_premium(ratios, P_base, m * 0.9)  # Balanced
+
+# Plotting
+fig, ax1 = plt.subplots(figsize=(12, 6))
+
+# Bar plot for liabilities
+width = 0.2  # Width of the bars
+bar_positions = np.arange(len(ratios))  # Bar positions
+
+# Create bar plots with correct spacing
+ax1.bar(bar_positions - width, liabilities_total_coverage, width=width, label="Total Coverage Liability", alpha=0.7)
+ax1.bar(bar_positions, liabilities_economic, width=width, label="Economic Liability", alpha=0.7)
+ax1.bar(bar_positions + width, liabilities_balanced, width=width, label="Balanced Liability", alpha=0.7)
+
+ax1.set_xlabel("Aggressive to Non-Aggressive Ratio")
+ax1.set_ylabel("Liability ($)", color='blue')
+ax1.tick_params(axis='y', labelcolor='blue')
+ax1.set_xticks(bar_positions)  # Set x-tick positions to the bar positions
+ax1.set_xticklabels([f"{ratio:.1f}" for ratio in ratios])  # Set x-tick labels to show ratio values
+
+# Create a secondary y-axis for premiums
+ax2 = ax1.twinx()
+
+# Adjusted x-coordinates for line plots to align with the center of the grouped bars
+ax2.plot(bar_positions - width, premiums_total_coverage, label="Total Coverage Premium", linestyle='-', marker='o')
+ax2.plot(bar_positions, premiums_economic, label="Economic Premium", linestyle='-',  marker='o')
+ax2.plot(bar_positions + width, premiums_balanced, label="Balanced Premium", linestyle='-',  marker='o')
+
+ax2.set_ylabel("Monthly Premium ($)", color='red')
+ax2.tick_params(axis='y', labelcolor='red')
+
+# Add legends for clarity
+ax1.legend(loc="upper left")
+ax2.legend(loc="upper right")
+
+# Show the plot
+plt.title("Insurance Policy Liability (Bar) and Premium (Line) vs. Aggressive Behavior Ratio")
+plt.grid(True)  # Optional: Add grid for better readability
+plt.show()
