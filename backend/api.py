@@ -3,7 +3,7 @@ from flask import Flask, jsonify, request
 import json
 
 from agents import embed,completion
-from backend.src import RAG
+from backend.src import RAG,Dynamic_policy_speed,Dynamic_policy_aggressive
 app = Flask(__name__)
 
 @app.route("/complete", methods=["POST"])
@@ -37,6 +37,35 @@ def search():
     else:
         return jsonify({"error": "No search term provided"}), 400
     
+
+
+
+
+@app.route("/speed", methods=["GET"])
+def dynamicpolicy_speed():
+    liabilities,premiums,speeds = Dynamic_policy_speed.speed_dynamic()
+    
+    if liabilities:
+        return jsonify({"liabilities":liabilities,"premiums":premiums,"speeds":speeds.to_dict()}),200
+    else:
+        return jsonify({"error": "No results are provided"}), 400
+    
+
+
+
+@app.route("/aggressive", methods=["GET"])
+def dynamicpolicy_aggressive():
+    liabilities,premiums,ratios = Dynamic_policy_aggressive.agg_dynamic()
+    if liabilities:
+        return jsonify({"liabilities":liabilities,"premiums":premiums,"ratios":ratios}),200
+    else:
+        return jsonify({"error": "No results are provided"}), 400
+    
+
+
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
