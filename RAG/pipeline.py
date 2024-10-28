@@ -7,22 +7,14 @@ from agents.embed import embed
 import ast
 
 
-av_data_path = 'CD80_dataset/CD80_dataset/Human-Driving and AV Crash Data/Self-Driving Crash Datasets/SGO-2021-01_Incident_Reports_ADAS.csv'
-user_data_path = 'CD80_dataset/CD80_dataset/Insurance Claims Data/insurance_claims.csv'
-
-
-df = create_policy_features(av_path=av_data_path, user_path=user_data_path, number_of_rows=50)
-
-
 def pre_process_df(df: pd.DataFrame) -> pd.DataFrame:
-    list_of_data_dict = []
-    for index in range(df.shape[0]):
-        row_dict = df.iloc[index].to_dict()
-        list_of_data_dict.append(row_dict)
+    "Returns a list of each df row as a dictionary"
+    list_of_data_dict = [df.iloc[index].to_dict() for index in range(df.shape[0])]
     return list_of_data_dict
 
 
 def true_false_for_column_group(data: dict, columns: list[str]) -> str:
+    "Helper function to process one-hot-encoding"
     text = ''
     for column in columns:
         if data[column] == 1:
@@ -33,6 +25,7 @@ def true_false_for_column_group(data: dict, columns: list[str]) -> str:
 
 
 def documents_to_dict(data: list[dict]) -> list[dict]:
+    "Formats the dict for better semantic search"
     new_dict_list = []
     for element in data:
         new_dict = {
@@ -54,6 +47,7 @@ def documents_to_dict(data: list[dict]) -> list[dict]:
 
 
 def embed_pipeline(documents: list[dict]):
+    """Embeds the documents in the dict and returns the same dict with the embeddings in it."""
     new_list_of_dicts = []
     for document in documents:
         try:
@@ -67,6 +61,10 @@ def embed_pipeline(documents: list[dict]):
     return new_list_of_dicts
 
 
-list_of_data_dict = pre_process_df(df)
-preprocessed_dicts = documents_to_dict(list_of_data_dict)
-x = embed_pipeline(preprocessed_dicts)
+if __name__ == '__main__':
+    av_data_path = 'CD80_dataset/CD80_dataset/Human-Driving and AV Crash Data/Self-Driving Crash Datasets/SGO-2021-01_Incident_Reports_ADAS.csv'
+    user_data_path = 'CD80_dataset/CD80_dataset/Insurance Claims Data/insurance_claims.csv'
+    df = create_policy_features(av_path=av_data_path, user_path=user_data_path, number_of_rows=50)
+    list_of_data_dict = pre_process_df(df)
+    preprocessed_dicts = documents_to_dict(list_of_data_dict)
+    x = embed_pipeline(preprocessed_dicts)
