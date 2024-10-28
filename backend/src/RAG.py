@@ -22,8 +22,7 @@ from azure.search.documents.indexes.models import (
     AzureOpenAIVectorizer
 )
 from imports import SEARCH_SERVICE_NAME, SEARCH_INDEX_NAME, SEARCH_ADMIN_KEY, SEARCH_ENDPOINT
-from pipeline import load_vector_database_documents
-
+import json
 
 
 # Initialize the SearchIndexClient
@@ -55,30 +54,34 @@ def create_index():
         index = SearchIndex(
             name=SEARCH_INDEX_NAME,
             fields=[
+                # SimpleField(name="id", type=SearchFieldDataType.String, key=True,sortable=True,filterable=True,facetable=True),
                 SimpleField(name="auto_make", type=SearchFieldDataType.String),
                 SimpleField(name="auto_model", type=SearchFieldDataType.String),
+                SimpleField(name="vehicle_maker", type=SearchFieldDataType.String),
+                SimpleField(name="vehicle_model", type=SearchFieldDataType.String),
                 SimpleField(name="auto_year", type=SearchFieldDataType.Int32),
+                SimpleField(name="vehicle_year", type=SearchFieldDataType.Int32),
+                SimpleField(name="age", type=SearchFieldDataType.Int32),
                 SimpleField(name="sex", type=SearchFieldDataType.String),
-                SimpleField(name="education_level", type=SearchFieldDataType.String),
+                SimpleField(name="education_level", type=SearchFieldDataType.String, key=True, filterable=True,facetable=True),
                 SimpleField(name="relationship", type=SearchFieldDataType.String),
                 SimpleField(name="previous_accidents_injuries", type=SearchFieldDataType.String),
                 SimpleField(name="previous_accidents_conditions", type=SearchFieldDataType.String),
-                SimpleField(name="previous_accidents_crash_speed", type=SearchFieldDataType.Int64),
-                SimpleField(name="liability_coverage_bodily_injury_liability_per_person", type=SearchFieldDataType.Int64),
-                SimpleField(name="liability_coverage_bodily_injury_liability_per_accident", type=SearchFieldDataType.Int64),
-                SimpleField(name="liability_coverage_property_damage_liability_per_accident", type=SearchFieldDataType.Int64),
-                SimpleField(name="comprehensive_coverage_deductible", type=SearchFieldDataType.Int64),
+                SimpleField(name="previous_accidents_crash_speed", type=SearchFieldDataType.Double),
+                SimpleField(name="liability_coverage_bodily_injury_liability_per_person", type=SearchFieldDataType.Int32),
+                SimpleField(name="liability_coverage_bodily_injury_liability_per_accident", type=SearchFieldDataType.Int32),
+                SimpleField(name="liability_coverage_property_damage_liability_per_accident", type=SearchFieldDataType.Int32),
+                SimpleField(name="comprehensive_coverage_deductible", type=SearchFieldDataType.Int32),
                 SimpleField(name="collision_coverage_included", type=SearchFieldDataType.Boolean),
-                SimpleField(name="collision_coverage_deductible", type=SearchFieldDataType.Int64),
-                SimpleField(name="personal_injury_protection_medical_expenses_limit", type=SearchFieldDataType.Int64),
-                SimpleField(name="personal_injury_protection_lost_wages_limit", type=SearchFieldDataType.Int64),
-                SimpleField(name="uninsured/underinsured_motorist_coverage_bodily_injury_per_person", type=SearchFieldDataType.Int64),
-                SimpleField(name="uninsured/underinsured_motorist_coverage_bodily_injury_per_accident", type=SearchFieldDataType.Int64),
-                SimpleField(name="uninsured/underinsured_motorist_coverage_property_damage_per_accident", type=SearchFieldDataType.Int64),
-                SimpleField(name="uninsured/underinsured_motorist_coverage_deductible", type=SearchFieldDataType.Int64),
-                SimpleField(name="av_specific_coverage_coverage_limit", type=SearchFieldDataType.Int64),
-                SimpleField(name="av_specific_coverage_deductible", type=SearchFieldDataType.Int64),
-                SimpleField(name="premium_details_annual_premium", type=SearchFieldDataType.Int64),
+                SimpleField(name="collision_coverage_deductible", type=SearchFieldDataType.Int32),
+                SimpleField(name="personal_injury_protection_medical_expenses_limit", type=SearchFieldDataType.Int32),
+                SimpleField(name="personal_injury_protection_lost_wages_limit", type=SearchFieldDataType.Int32),
+                SimpleField(name="underinsured_motorist_coverage_bodily_injury_per_person", type=SearchFieldDataType.Int32),
+                SimpleField(name="underinsured_motorist_coverage_bodily_injury_per_accident", type=SearchFieldDataType.Int32),
+                SimpleField(name="underinsured_motorist_coverage_property_damage_per_accident", type=SearchFieldDataType.Int32),
+                SimpleField(name="underinsured_motorist_coverage_deductible", type=SearchFieldDataType.Int32),
+                SimpleField(name="av_specific_coverage_deductible", type=SearchFieldDataType.Int32),
+                SimpleField(name="premium_details_annual_premium", type=SearchFieldDataType.Int32),
                 SimpleField(name="premium_details_discounts", type=SearchFieldDataType.String),
                 SimpleField(name="premium_details_payment_options", type=SearchFieldDataType.String),
                 SearchField(name="embedding", type=SearchFieldDataType.Collection(SearchFieldDataType.Single), searchable=True, vector_search_dimensions=1536, vector_search_profile_name="myHnswProfile"),
@@ -88,8 +91,8 @@ def create_index():
         )
         
       
-        result = index_client.create_or_update_index(index)
-        print(f' {result.name} created')
+        #result = index_client.create_or_update_index(index)
+        #print(f' {result.name} created')
 
         # Create the index
         index_client.delete_index(index)
@@ -128,6 +131,16 @@ def search_with_vector(query_embedding):
 if __name__ == "__main__":
     create_index()
 
-    documents = load_vector_database_documents()
 
-    index_documents(documents)
+    with open('documents_for_vector.json', 'r') as file:
+        list_of_dict = json.load(file)
+
+    index_documents(list_of_dict)
+
+
+    # x = list_of_dict[3]
+    # keys= x.keys()
+    # for i in keys:
+    #     print(i, type(x[i]))
+    # # print(type(x["auto_make"]))
+    # # index_documents(list_of_dict)
