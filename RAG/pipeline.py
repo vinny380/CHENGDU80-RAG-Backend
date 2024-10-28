@@ -68,7 +68,7 @@ def embed_pipeline(document: dict) -> dict:
     return dictionary
 
 
-def load_vector_database():
+def load_vector_database_documents():
     av_data_path = 'CD80_dataset/CD80_dataset/Human-Driving and AV Crash Data/Self-Driving Crash Datasets/SGO-2021-01_Incident_Reports_ADAS.csv'
     user_data_path = 'CD80_dataset/CD80_dataset/Insurance Claims Data/insurance_claims.csv'
     print("##### Loading df\n")
@@ -78,34 +78,28 @@ def load_vector_database():
     return_list = []
 
     document_index = 1
-    # for document in preprocessed_dicts:
-        # try:
-    print(f"##### Starting to edit document {document_index}/{len(preprocessed_dicts)}")
-    print("###### Creating policy")
-    sample_policy = complete(str(preprocessed_dicts[0]), json_formatting=False) # Writes the Policy Contract
-    sample_policy_content = sample_policy.content
+    for document in preprocessed_dicts:
+        try:
+            print(f"##### Starting to edit document {document_index}/{len(preprocessed_dicts)}")
+            print("###### Creating policy")
+            sample_policy = complete(str(document), json_formatting=False) # Writes the Policy Contract
+            sample_policy_content = sample_policy.content
 
-    print("###### Extracting policy info")
-    metadata_json = extract_info_from_policy(str(sample_policy_content)) # Extracts the json from the policy contract
-    metadata_json_content = str(metadata_json.content).strip("```json").strip("```") 
-    metadata_json_to_dict = loads(metadata_json_content) # Turns str back to dict
-    preprocessed_dicts[0].update(metadata_json_to_dict) # Adds metadata_json_to_dict to the current dict
+            print("###### Extracting policy info")
+            metadata_json = extract_info_from_policy(str(sample_policy_content)) # Extracts the json from the policy contract
+            metadata_json_content = str(metadata_json.content).strip("```json").strip("```") 
+            metadata_json_to_dict = loads(metadata_json_content) # Turns str back to dict
+            document.update(metadata_json_to_dict) # Adds metadata_json_to_dict to the current dict
 
-    print(f"##### Starting embedding for document {document_index}")
-    dict_with_embeddings = embed_pipeline(preprocessed_dicts[0]) # Embeds the individual dict
-    # preprocessed_dicts[0].update(dict_with_embeddings) 
-    flattened_dict = flatten_dict(dict_with_embeddings)
-    return_list.append(flattened_dict)
-    print(f"###### Document {document_index}\n")
-    document_index += 1
-        # except:
-            # continue
+            print(f"##### Starting embedding for document {document_index}")
+            dict_with_embeddings = embed_pipeline(document) # Embeds the individual dict
+
+            print(f"#### Flatenning out dictionary")
+            flattened_dict = flatten_dict(dict_with_embeddings)
+            return_list.append(flattened_dict)
+
+            print(f"###### Document {document_index} done\n")
+            document_index += 1
+        except:
+            continue
     return return_list
-
-
-
-if __name__ == '__main__':
-    x = load_vector_database()
-    for n in x:
-        with open("knsk.txt", 'w') as file:
-            file.write(str(n))
