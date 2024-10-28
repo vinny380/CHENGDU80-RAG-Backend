@@ -1,3 +1,6 @@
+import os, sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from azure.search.documents import SearchClient
 from azure.search.documents.indexes import SearchIndexClient
 from azure.search.documents.indexes.models import SearchIndex,SearchableField, SimpleField,SearchField, SearchFieldDataType
@@ -18,8 +21,8 @@ from azure.search.documents.indexes.models import (
     SearchIndex,
     AzureOpenAIVectorizer
 )
-from backend.imports import SEARCH_SERVICE_NAME, SEARCH_INDEX_NAME, SEARCH_ADMIN_KEY, SEARCH_ENDPOINT
-from RAG.pipeline import load_vector_database_documents
+from imports import SEARCH_SERVICE_NAME, SEARCH_INDEX_NAME, SEARCH_ADMIN_KEY, SEARCH_ENDPOINT
+from pipeline import load_vector_database_documents
 
 
 
@@ -52,11 +55,35 @@ def create_index():
         index = SearchIndex(
             name=SEARCH_INDEX_NAME,
             fields=[
-                SimpleField(name="id", type=SearchFieldDataType.String, key=True, sortable=True, filterable=True, facetable=True),
-                SearchableField(name="title", type=SearchFieldDataType.String),
-                SearchableField(name="content", type=SearchFieldDataType.String, searchable=True),
-                SearchField(name="embedding", type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
-                searchable=True, vector_search_dimensions=1536, vector_search_profile_name="myHnswProfile")           ],
+                SimpleField(name="auto_make", type=SearchFieldDataType.String),
+                SimpleField(name="auto_model", type=SearchFieldDataType.String),
+                SimpleField(name="auto_year", type=SearchFieldDataType.Int32),
+                SimpleField(name="sex", type=SearchFieldDataType.String),
+                SimpleField(name="education_level", type=SearchFieldDataType.String),
+                SimpleField(name="relationship", type=SearchFieldDataType.String),
+                SimpleField(name="previous_accidents_injuries", type=SearchFieldDataType.String),
+                SimpleField(name="previous_accidents_conditions", type=SearchFieldDataType.String),
+                SimpleField(name="previous_accidents_crash_speed", type=SearchFieldDataType.Int64),
+                SimpleField(name="liability_coverage_bodily_injury_liability_per_person", type=SearchFieldDataType.Int64),
+                SimpleField(name="liability_coverage_bodily_injury_liability_per_accident", type=SearchFieldDataType.Int64),
+                SimpleField(name="liability_coverage_property_damage_liability_per_accident", type=SearchFieldDataType.Int64),
+                SimpleField(name="comprehensive_coverage_deductible", type=SearchFieldDataType.Int64),
+                SimpleField(name="collision_coverage_included", type=SearchFieldDataType.Boolean),
+                SimpleField(name="collision_coverage_deductible", type=SearchFieldDataType.Int64),
+                SimpleField(name="personal_injury_protection_medical_expenses_limit", type=SearchFieldDataType.Int64),
+                SimpleField(name="personal_injury_protection_lost_wages_limit", type=SearchFieldDataType.Int64),
+                SimpleField(name="uninsured/underinsured_motorist_coverage_bodily_injury_per_person", type=SearchFieldDataType.Int64),
+                SimpleField(name="uninsured/underinsured_motorist_coverage_bodily_injury_per_accident", type=SearchFieldDataType.Int64),
+                SimpleField(name="uninsured/underinsured_motorist_coverage_property_damage_per_accident", type=SearchFieldDataType.Int64),
+                SimpleField(name="uninsured/underinsured_motorist_coverage_deductible", type=SearchFieldDataType.Int64),
+                SimpleField(name="av_specific_coverage_coverage_limit", type=SearchFieldDataType.Int64),
+                SimpleField(name="av_specific_coverage_deductible", type=SearchFieldDataType.Int64),
+                SimpleField(name="premium_details_annual_premium", type=SearchFieldDataType.Int64),
+                SimpleField(name="premium_details_discounts", type=SearchFieldDataType.String),
+                SimpleField(name="premium_details_payment_options", type=SearchFieldDataType.String),
+                SearchField(name="embedding", type=SearchFieldDataType.Collection(SearchFieldDataType.Single), searchable=True, vector_search_dimensions=1536, vector_search_profile_name="myHnswProfile"),
+                
+                ],
             vector_search=vector_search,
         )
         
