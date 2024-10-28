@@ -19,6 +19,7 @@ from azure.search.documents.indexes.models import (
     AzureOpenAIVectorizer
 )
 from backend.imports import SEARCH_SERVICE_NAME, SEARCH_INDEX_NAME, SEARCH_ADMIN_KEY, SEARCH_ENDPOINT
+from RAG.pipeline import load_vector_database_documents
 
 
 
@@ -55,7 +56,7 @@ def create_index():
                 SearchableField(name="title", type=SearchFieldDataType.String),
                 SearchableField(name="content", type=SearchFieldDataType.String, searchable=True),
                 SearchField(name="embedding", type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
-                searchable=True, vector_search_dimensions=3, vector_search_profile_name="myHnswProfile")           ],
+                searchable=True, vector_search_dimensions=1536, vector_search_profile_name="myHnswProfile")           ],
             vector_search=vector_search,
         )
         
@@ -79,23 +80,6 @@ def index_documents(documents):
     #print(f"Indexed documents: {result}")
     return len(result)
 
-def read_documents():
-    documents = [
-        {
-            "id": "1",
-            "content": "This is a sample document.",
-            "title": "Sample Title",
-            "embedding": [0.1, 0.2, 0.3]  # Assuming 'embedding' is a Collection field
-        },
-        {
-            "id": "2",
-            "content": "Another sample document.",
-            "title": "Another Title",
-            "embedding": [0.4, 0.5, 0.6]
-        }
-    ]
-    return documents
-
 
 def search_with_vector(query_embedding):
     vector_query = VectorizedQuery(vector=query_embedding, k_nearest_neighbors=3, fields="embedding")
@@ -117,6 +101,6 @@ def search_with_vector(query_embedding):
 if __name__ == "__main__":
     create_index()
 
-    documents = read_documents()
+    documents = load_vector_database_documents()
 
     index_documents(documents)
