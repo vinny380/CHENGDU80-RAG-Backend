@@ -44,3 +44,7 @@ CD80_dataset
 __pycache__
 
 .vscode
+
+example.txt
+output.txt
+json.json
