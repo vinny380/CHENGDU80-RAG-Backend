@@ -62,6 +62,13 @@ def dynamicpolicy_aggressive():
         return jsonify({"error": "No results are provided"}), 400
     
 
+    
+def generate_policy():
+    form_submitted = str(request.args.get("form"))
+    embedded_form = embed.embed(form_submitted)
+    most_similar_vectors = RAG.search_with_vector(embedded_form)
+    #TODO define the parametrs that will be passed to the LLM
+    policy_contract = completion.complete(form_submitted)
 
 
 

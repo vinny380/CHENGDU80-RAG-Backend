@@ -23,6 +23,7 @@ from azure.search.documents.indexes.models import (
 )
 from imports import SEARCH_SERVICE_NAME, SEARCH_INDEX_NAME, SEARCH_ADMIN_KEY, SEARCH_ENDPOINT
 import json
+from agents.embed import embed
 
 
 # Initialize the SearchIndexClient
@@ -112,12 +113,12 @@ def index_documents(documents):
 
 
 def search_with_vector(query_embedding):
-    vector_query = VectorizedQuery(vector=query_embedding, k_nearest_neighbors=3, fields="embedding")
+    vector_query = VectorizedQuery(vector=query_embedding, k_nearest_neighbors=5, fields="embedding")
   
     results = search_client.search(  
         search_text=None,  
         vector_queries= [vector_query],
-        select=["title", "content"],
+        select=["auto_make", "auto_model"],
     )  
     
     #for result in results:  
@@ -128,19 +129,10 @@ def search_with_vector(query_embedding):
 
 
 
-if __name__ == "__main__":
-    create_index()
+# if __name__ == "__main__":
 
+#     n = input("")
+#     vector = embed(n)
+#     x = search_with_vector(vector)
+#     print(x)
 
-    with open('documents_for_vector.json', 'r') as file:
-        list_of_dict = json.load(file)
-
-    index_documents(list_of_dict)
-
-
-    # x = list_of_dict[3]
-    # keys= x.keys()
-    # for i in keys:
-    #     print(i, type(x[i]))
-    # # print(type(x["auto_make"]))
-    # # index_documents(list_of_dict)
