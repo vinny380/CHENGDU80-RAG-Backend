@@ -12,6 +12,5 @@ EMBEDDING_MODEL = AzureOpenAIEmbeddings(
 
 
 def embed(prompt: str) -> dict:
-    """Em"""
     ai_msg = EMBEDDING_MODEL.embed_query(prompt)
     return ai_msg

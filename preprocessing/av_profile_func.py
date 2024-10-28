@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-def create_av_profile(path):
+def create_av_profile(path: str) -> pd.DataFrame:
     '''
     takes in a path
     return df of AV profile such as:

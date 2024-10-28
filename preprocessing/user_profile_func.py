@@ -1,6 +1,6 @@
 import pandas as pd
 
-def create_user_profile(path):
+def create_user_profile(path: str) -> pd.DataFrame:
     '''
     takes in a path
     returns a df of user profile such as:
