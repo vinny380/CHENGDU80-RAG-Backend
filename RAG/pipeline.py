@@ -4,7 +4,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from preprocessing.policy_feature_func import create_policy_features
 import pandas as pd
 from agents.embed import embed
+from agents.completion import complete, extract_info_from_policy
 import ast
+from json import load, loads
+
 
 
 def pre_process_df(df: pd.DataFrame) -> pd.DataFrame:
@@ -46,7 +49,7 @@ def documents_to_dict(data: list[dict]) -> list[dict]:
     return new_dict_list
 
 
-def embed_pipeline(documents: list[dict]):
+def embed_pipeline(documents: list[dict]) -> list[dict]:
     """Embeds the documents in the dict and returns the same dict with the embeddings in it."""
     new_list_of_dicts = []
     for document in documents:
@@ -61,10 +64,28 @@ def embed_pipeline(documents: list[dict]):
     return new_list_of_dicts
 
 
-if __name__ == '__main__':
+def load_vector_database():
     av_data_path = 'CD80_dataset/CD80_dataset/Human-Driving and AV Crash Data/Self-Driving Crash Datasets/SGO-2021-01_Incident_Reports_ADAS.csv'
     user_data_path = 'CD80_dataset/CD80_dataset/Insurance Claims Data/insurance_claims.csv'
     df = create_policy_features(av_path=av_data_path, user_path=user_data_path, number_of_rows=50)
     list_of_data_dict = pre_process_df(df)
     preprocessed_dicts = documents_to_dict(list_of_data_dict)
-    x = embed_pipeline(preprocessed_dicts)
+    list_of_data_dict = []
+
+
+    for document in preprocessed_dicts:
+        sample_policy = complete(str(document), json_formatting=False)
+        sample_policy_content = sample_policy.content
+        metadata_json = extract_info_from_policy(str(sample_policy_content))
+        metadata_json_content = str(metadata_json.content).strip("```json").strip("```")
+        metadata_json_to_dict = loads(metadata_json_content)
+        document.update(metadata_json_to_dict)
+        dict_with_embeddings = embed_pipeline(preprocessed_dicts)
+        list_of_data_dict.append(dict_with_embeddings)
+    return dict_with_embeddings
+
+
+if __name__ == '__main__':
+    x = load_vector_database()
+    for n in x:
+        print(n)
